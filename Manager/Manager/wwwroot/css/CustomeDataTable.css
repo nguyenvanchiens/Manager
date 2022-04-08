@@ -1,0 +1,10 @@
+﻿.table td {
+    padding: 0.35rem !important;
+}
+.table .btn {
+    padding: 0.3rem 0.3rem !important;
+}
+.table .orderstatus {
+    padding:3px !important;
+}
+

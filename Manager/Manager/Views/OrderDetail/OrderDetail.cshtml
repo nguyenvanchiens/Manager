@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Manager.Models.OrderDetail>
+@{
+    ViewData["Title"] = "OrderDetail";
+}
+
+
+ <main class="page-content">
+    <div class="page-header">
+       <p class="fw">Danh sách chi tiết đơn hàng</p>
+    </div>
+    <div class="page-search">
+      
+    </div>
+    <div class="page-content-table">
+        <table  class="table table-bordered" id="dataTable" cellpadding=0>
+        <thead>   
+          <tr>
+            <th scope="col">Hình Ảnh</th>
+            <th scope="col">Tên sản phẩm</th>
+            <th scope="col">Giá bán</th>
+            <th scope="col">Số lượng</th>
+            <th scope="col">Mã Giảm giá</th>
+            <th scope="col">Tổng</th>
+            <th scope="col">Chỉnh sửa</th>
+          </tr>
+        </thead>
+        <tbody>
+           @foreach (var item in Model)
+           {
+                 double sum = item.Quantity * item.Price;
+                 <tr>
+                 <td class="text-center">
+                    <img style="width:100px" src="abc"/> 
+                 </td>
+                 <td>@item.Description</td>
+                 <td>@item.Price</td>
+                 <td>
+                     @item.Quantity
+                 </td>
+                 <td>@item.PromotionalCode</td>
+                 <td>@sum.ToString("#,##0.###")</td>     
+                 <td><a href="/OrderDetail/Update/@item.OrderDetailId" class="btn btn-primary">Sửa</a></td>        
+             </tr>
+           }
+           
+        </tbody>
+      </table>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+  </main>
+  <style>
+  tr td .btn{
+    background-color: #007bff;
+}
+.btn-execl{
+    border:none;
+    outline:none;
+    cursor:pointer;
+    padding: 0;
+    margin: 0;
+}
+img{
+    cursor:pointer;
+}
+.dataTable_wrapper{
+    position:relative;
+}
+.btn-execl:active {
+    outline: none;
+    border: none;
+}
+.btn-execl:focus {
+    outline: none;
+    border: none;
+}
+</style>

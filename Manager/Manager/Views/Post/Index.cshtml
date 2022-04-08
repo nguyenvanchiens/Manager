@@ -1,0 +1,231 @@
+﻿@model Manager.Models.Post;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+ <main class="page-content">
+    <div class="page-header">
+      <p class="fw">Danh sách bài viết</p>
+       <!-- Button HTML (to Trigger Modal) -->
+    <a href="/Post/Create" class="btn btn-primary">Thêm mới</a>
+    </div>
+    <div class="page-search">
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <span><i b-eginzb9zup="" class="fa fa-search" aria-hidden="true"></i></span>
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              </button>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+              <div class="input-groups">
+                 <form method="get" style="display:flex">
+                      <label style="margin-right:10px" for="">Tìm kiếm bài viết</label>
+                    <div>
+                    <div>
+                    <input type="text" name="filter">
+                    </div> 
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    </div>     
+                 </form>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-content-table">
+      <table class="table table-bordered" id="dataTable" cellpadding=0>
+        <thead>
+          <tr>
+            <th scope="col">Tên bài viết</th>
+            <th scope="col">Ngôn ngữ</th>
+            <th scope="col">Ngày bắt đầu</th>
+            <th scope="col">Ngày kết thúc</th>
+
+
+            <th scope="col" class="text-center">Chức năng</th>
+          </tr>
+        </thead>
+        <tbody>
+           @foreach (var post in ViewBag.Posts)
+           {
+             <tr>
+                <td>@post.Title</td>
+                <td>
+                    @if (@post.Language==0)
+                    {
+                        <span>Tiếng Việt</span>
+                    }else{<span>Tiếng Anh</span>}
+                </td>
+                <td>                  
+                    @post.StartDate.ToString(string.Format("dd-MM-yyyy"))
+                </td> 
+                <td>                  
+                    @post.EndDate.ToString(string.Format("dd-MM-yyyy"))
+                </td>                   
+                <td class="text-center">
+                     @Html.ActionLink("Chỉnh Sửa", "Edit", new { id=post.PostId },new{@class ="btn bg-primary btn-primary"})
+                   
+                    </td>
+             </tr>
+           }
+        </tbody>
+      </table>
+    </div>
+  </main>
+    <div class="alert alert-primary" id="notify" role="alert">
+       Thêm Mới Thành Công
+    </div>
+  @section Scripts {
+    <script>
+             
+    </script>     
+}
+<script>
+    function Validate() {
+        debugger
+        var employeeCode = $('#EmployeeCode').val();
+        var employeeName = $('#EmployeeName').val();
+        var employeeId = $('#EmployeeId').val();
+        if (employeeCode == null || employeeCode == "") {
+            $('#erEmployeeCode').html('Không được bỏ trống');
+            $('#EmployeeCode').focus();
+            return false;
+        }
+        else if (employeeName == null || employeeName == "") {
+            $('#erEmployeeName').html('Không được bỏ trống');
+            $('#EmployeeName').focus();
+            return false;
+        }
+        if(employeeCode!=null||employeeCode == ""){
+            debugger
+            var reuslt = this.checkDuplicate(employeeId,employeeCode);
+            console.log(reuslt);
+            if(reuslt!=undefined){
+                  $('#erEmployeeCode').html('Đã tồn tại mã này');
+                  $('#EmployeeCode').focus();    
+                  return false;
+            }
+            else{
+                return true;
+            }
+        }
+        else {
+            return true;
+        }
+        
+    };
+    function checkDuplicate(employeeId,employeeCode){
+        debugger
+        var result = "";
+        $.ajax({
+                type: 'Get',
+                url: '/Home/GetEmployeeCode',
+                contentType: 'application/json',
+                data: { 
+                    employeeId:employeeId,
+                    employeeCode: employeeCode 
+                },
+                async: false,
+                  success: function (data) {                  
+                    result = data;
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+            return result;
+    }
+    function ShowFormAdd(){
+        $.ajax({
+            type: 'Get',
+            url: '/Home/NewCodeEmployee',
+            contentType: 'application/json; charset=utf-8',
+            async: false,
+            success: function (data) {             
+                $('#EmployeeCode').val(data);                          
+            }
+        })
+    };
+    function Delete(employeeId) {
+        var result = confirm("Bạn có muốn xóa nhân viên này?");
+        if (result) {
+            var Url = "";
+            Url = "/Home/Delete"
+            $.ajax({
+                type: 'Post',
+                url: Url,
+                data: { EmployeeId: employeeId },
+                async: false,
+                success: function () {
+                    window.location.pathname = "/Home/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+        } else {
+    
+        }
+    }
+    function HideForm() {
+        $('#myFrom')[0].reset();
+        $('.btn-add').html('Thêm');
+        $('#erEmployeeCode').html('');
+        $('#erEmployeeName').html('');
+    }
+    function ShowFormUpdate(employeeId) {
+        this.employeeId = employeeId;
+        $.ajax({
+            type: 'Get',
+            url: '/Home/Get',
+            contentType: 'application/json; charset=utf-8',
+            data: { employeeId: employeeId },
+            async: false,
+            success: function (data) {
+                $('.btn-add').html('Sửa');
+                $('#EmployeeId').val(data.employeeId);
+                $('#EmployeeCode').val(data.employeeCode);
+                $('#EmployeeName').val(data.employeeName);
+                $('#DateOfBirth').val(formatDate(data.dateOfBirth));
+                $('#Address').val(data.address);
+                $('#Phone').val(data.phone);
+                var option = $('.modal-body option');
+                for (var i = 0; i < option.length; i++) {
+                    var departmentId = option[i].value;
+                    if (departmentId == data.departmentId) {
+                        option[i].setAttribute('selected', true);
+                    }
+                    else {
+                        option[i].removeAttribute('selected');
+                    }
+                }
+    
+            }
+        })
+    }
+    
+    function formatDate(val) {
+        var result = "";
+        var date = new Date(val);
+        if (Number.isNaN(date.getTime())) {
+            result = "";
+        } else {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+            result = year + "-" + month + "-" + day;
+        }
+        return result;
+    }
+</script>
+

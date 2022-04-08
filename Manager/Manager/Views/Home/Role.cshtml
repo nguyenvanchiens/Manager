@@ -1,0 +1,106 @@
+﻿@model Manager.Models.Employee
+
+@{
+    ViewData["Title"] = "Role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+ <!-- sidebar-wrapper  -->
+      <main class="page-content">
+        <h2>Phân quyền cho nhân viên</h2>
+        <input asp-for="EmployeeId" id="EmployeeId" hidden/>
+        <div class="panel-group">
+           <div class="panel panel-default">
+           <div class="panel-heading">Danh sách các quyền</div>
+           <from>  
+                @for(var item = 0;item<ViewBag.Permissions.Count;item++)
+                {
+                    var flg = false;
+                    @if (ViewBag.checkedvalue != null)
+                    {
+                        @foreach (var items in ViewBag.checkedvalue)
+                        {
+                            if (items == @ViewBag.Permissions[item].PermissionId)
+                            {
+                                <div class="group-checkbox">
+                                <span style="position:relative;top:-2px" ideP="@ViewBag.EmployeeId" class="collapses collapsible" data-loaded="false" pid="@ViewBag.Permissions[item].PermissionId">&nbsp;</span>
+                                 <input style="margin:0 !important" id="checkboxAll" checked type="checkbox" value="@ViewBag.Permissions[item].PermissionId"/> 
+                                <label style="margin: 0 10px 0 5px !important;">
+                                  @ViewBag.Permissions[item].PermissionName
+                                </label>   
+                               
+                                </div>
+                                flg = true;
+                            }                          
+                        }                       
+                    }
+                    @if (flg == false)
+                    {
+                         <div class="group-checkbox">
+                         <span style="position:relative;top:-2px" class="collapses collapsible" data-loaded="false" pid="@ViewBag.Permissions[item].PermissionId">&nbsp;</span>
+                          <input style="margin:0 !important" id="checkboxAll" type="checkbox" value="@ViewBag.Permissions[item].PermissionId"/> 
+                         <label style="margin: 0 10px 0 5px !important;">
+                           @ViewBag.Permissions[item].PermissionName
+                         </label>   
+                        
+                         </div>  
+                    }                                     
+                }
+            </from>
+           </div>
+           <button onclick="Save()" class="btn btn-primary mt-4">Lưu</button>
+        </div>
+      </main>
+      <!-- page-content" -->
+
+
+@section Scripts{
+    <script src="~/js/MyTreeViewCheckbox.js"></script>
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $(document).on("click", "input[type='checkbox']", function (e) {
+        debugger
+        if (this.checked){
+               var inputs = $(this).siblings()[2].childNodes;
+               $(inputs).children('li input').attr('checked',true);
+
+            }
+           else{
+               var inputs = $(this).siblings()[2].childNodes;
+               $(inputs).children('li input').attr('checked',false);
+          }
+    })
+     
+})
+</script>
+<script>        
+    function Save(){
+              debugger
+              var data = $('from input');
+              var employeeId = $('#EmployeeId').val();
+              var listId = new Array();
+              for(var i = 0;i<data.length;i++){
+                  if(data[i].checked==true){
+                      listId.push(data[i].value);
+                  }
+              }
+               $.ajax({
+                type: 'Post',
+                url: '@Url.Action("Role", "Home")',           
+                dataType:"json",
+                data: { id:employeeId,listId: listId },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Home/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+      })
+    }     
+</script>
+

@@ -1,0 +1,298 @@
+﻿@model Manager.Models.Menu;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ 
+
+
+
+ <main class="page-content">
+    <div class="page-header">
+      <p class="fw">Danh sách tên miền đen</p>
+       <!-- Button HTML (to Trigger Modal) -->
+    <button type="button" href="#myModal" role="button" class="btn btn-primary" data-bs-toggle="modal">Thêm mới</button>
+     <!-- Modal HTML -->
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Mới Menu</h5>
+                    <button type="button" onclick="HideForm()" class="btn-close btn btn-default" data-bs-dismiss="modal"> <i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="modal-body">
+                  <form id="myFrom">                                        
+                     <div class="mb-3">
+                      <input  type="text" class="form-control" hidden id="MenuId" aria-describedby="emailHelp">
+                    
+                    </div>                  
+                      <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Tên</label>
+                      <input asp-for="Title"  required name="Title" type="text" class="form-control"  id="MenuTitle" aria-describedby="emailHelp">
+                    
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Link</label>
+                      <input asp-for="Link" required name="Link" type="text" class="form-control"  id="MenuLink" aria-describedby="emailHelp">
+                    
+                    </div>
+                     <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Ngôn Ngữ</label>
+                      <select class="form-control" asp-for="LanguageId">
+                          @foreach (var item in ViewBag.Language)
+                          {
+                              <option  value="@item.LanguageId">@item.Name</option>
+                          }                         
+                      </select>
+                    </div>
+                     <div class="form-group">
+                        <label for="exampleFormControlSelect1">Chọn Parent</label>
+                         <div class="dropdown dropdown-tree bt-s" id="firstDropDownTree2" parentId=""></div>
+                    </div>
+                      <div class="mb-3 text-right">
+                      <button type="button" onclick="AddOrUpdate()" class="btn btn-primary btn-add">Thêm</button>
+                    </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="page-search">
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <span><i b-eginzb9zup="" class="fa fa-search" aria-hidden="true"></i></span>
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              </button>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+              <div class="input-groups">
+                 <form method="get" style="display:flex">
+                      <label style="margin-right:10px" for="">Tên Quyền</label>
+                    <div>
+                    <div>
+                    <input type="text" name="filter">
+                    </div> 
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    </div>     
+                 </form>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-content-table">
+      <table class="table table-bordered" id="dataTable" cellpadding=0>
+        <thead>
+          <tr>
+           
+            <th scope="col">Menu</th>
+          </tr>
+        </thead>
+        <tbody id="tableContext">
+             @foreach (var menu in ViewBag.Menus)
+             {            
+                <tr>    
+                     
+                     <td class="tableParent"> 
+                         <div>
+                             <span class="collapses collapsible" data-loaded="false" pid="@menu.MenuId">&nbsp;</span>
+                              <span class="tbpermisionname">@menu.Title</span>
+                         </div>
+                         <div>
+                             <button style="margin-right:20px" href="#myModal" data-bs-toggle="modal" onclick="ShowFormUpdate('@menu.MenuId')" type="button" class="btn btn-default">Chỉnh sửa</button>
+                           <a style="cursor:pointer" onclick="Delete('@menu.MenuId')" class="btn btn-light">Xóa</a>
+                         </div>
+                       </td>
+                    
+                </tr>   
+             }
+             
+            
+        </tbody>
+      </table>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+  </main>
+    <div class="alert alert-primary" id="notify" role="alert">
+       Thêm Mới Thành Công
+    </div>
+
+
+     
+
+
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+      integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+      crossorigin="anonymous"></script>
+    <script src="/vendor/dropdowntree/dropdowntree.js"></script>
+
+       
+ <script src="~/js/MenuTree.js">
+     
+</script>
+@section Scripts{
+   <script src="/js/MyTreeViewMenuTable.js"></script>
+}
+
+
+<script>
+    var MenuId = "";
+     function Validate(){
+        $("input[required]").each(function () {
+          let value = $(this).val();
+          if (!value) {
+            $(this).addClass("s-input-error");
+            $(this).attr("validate", false);
+            $(this).attr("title", "Không thể bỏ trống");
+          } else {
+            $(this).removeClass("s-input-error");
+            $(this).attr("validate", true);
+          }
+          });
+     }  
+    
+    function Delete(MenuId) {
+        var result = confirm("Bạn có muốn xóa quyền này không?");
+        if (result) {
+            var Url = "";
+            Url = "/Menu/Delete"
+            $.ajax({
+                type: 'Post',
+                url: Url,
+                data: { id: MenuId },
+                async: false,
+                success: function () {
+                    window.location.pathname = "/Menu/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+        } else {
+    
+        }
+    }
+    function HideForm() {
+        $('#myFrom')[0].reset();
+        $('#ParentId').prop('selectedIndex',0)
+        $('.btn-add').html('Thêm');
+        var PermissionId = "";
+    }
+    function ShowFormUpdate(MenuId) {
+        this.MenuId = MenuId;
+         $('.btn-add').html('Sửa');
+        $.ajax({
+            type: 'Get',
+            url: '/Menu/Get',
+            contentType: 'application/json; charset=utf-8',
+            data: { id: MenuId },
+            async: false,
+            success: function (data) {
+               $('#MenuTitle').val(data.title); 
+               $('#MenuLink').val(data.link);
+               this.PermissionId = data.permissionId;
+                var option = $('.modal-body option');
+                for (var i = 0; i < option.length; i++) {
+                    var LanguageId = option[i].value;
+                    var parent = data.languageId;
+                    if (LanguageId == data.languageId) {
+                        option[i].setAttribute('selected', true);
+                    }
+                    else {
+                        option[i].removeAttribute('selected');
+                    }
+                }
+                console.log(data);
+            }
+        })
+    }
+    function AddOrUpdate(){
+        debugger;                                                                                                 
+            var data = {
+                MenuId:this.MenuId,
+                Title:$('#MenuTitle').val(),
+                Link:$('#MenuLink').val(),
+                ParentId:$('#firstDropDownTree2').attr("parentid"),
+                LanguageId:$("#LanguageId").val()
+            };   
+            
+            this.Validate();
+              let validateInput = $('input[validate="false"]');
+                if (validateInput && validateInput.length > 0) {
+                  alert("Bạn hãy điền đủ các trường thông tin");
+                  $(validateInput)[0].focus();
+                  return;
+                }
+            if(this.MenuId==""){
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("Create", "Menu")',           
+                dataType:"json",
+                data: { menu: data },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Menu/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+            }
+            else{           
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("Edit", "Menu")',           
+                dataType:"json",
+                data: { menu: data },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Menu/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+        }
+    }
+</script>
+<style>
+.dropdown-toggle{
+    width: 200px;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    justify-content: space-between;
+    margin: unset !important;
+}
+.dropdown-toggle::after{
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.4em solid;
+    border-right: 0.4em solid transparent;
+    /* border-bottom: 1px solid; */
+    border-left: 0.4em solid transparent;
+}
+.dropdown-menu{
+    min-width:200px;
+}
+table tbody tr .tableParent{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+</style>

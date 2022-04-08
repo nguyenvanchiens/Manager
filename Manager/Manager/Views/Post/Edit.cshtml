@@ -1,0 +1,399 @@
+﻿@model Manager.Models.Post
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/post.css" />
+ <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    />
+ <!-- sidebar-wrapper  -->
+      <main class="page-content">
+        <div class="page-header-wrap">
+          <h4 style="margin-right: 10px; margin-top: 0; margin-bottom: 0">
+            Chỉnh sửa chi tiết bài đăng trên blog - Valentine này tặng quà gì
+            cho các cung hoàng đạo
+          </h4>
+          <a href="/Post">Quay lại danh sách bài đăng trên blog</a>
+        </div>
+        <div class="page-header-btn">
+          <button class="btn btn-primary btn-violet">
+            <i class="fa fa-eye" aria-hidden="true"></i>
+            Xem trước
+          </button>
+          <button class="btn btn-primary" onclick="UpdatePost(1)">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i>Lưu
+          </button>
+          <button class="btn btn-primary" onclick="UpdatePost(2)">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i>Lưu và tiếp tục sửa
+          </button>
+          <button onclick="Delete()" class="btn btn-danger">
+            <i class="fa fa-trash-o" aria-hidden="true"></i>Xóa bỏ
+          </button>
+        </div>
+        <div class="page-content-table">
+          <div class="panel-group" id="accordion">
+            <div class="panel">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a
+                    class="colpsible-panel"
+                    data-toggle="collapse"
+                    data-parent="#accordion"
+                    href="#collapseTwo"
+                  >
+                    <i class="fa fa-info" aria-hidden="true"></i>
+                    <span style="margin-left: 5px"> Tìm kiếm</span>
+                  </a>
+                </h4>
+              </div>
+
+              <div id="collapseTwo" class="panel-collapse collapse show">
+                <div class="panel-body">
+                  <div class="form">
+                    <div class="form-add">                     
+                        <input asp-for="PostId" hidden/>
+                    </div>
+                    <div class="form-add">
+                      <label for="sel1"
+                        >Ngôn ngữ<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <select asp-for="Language" class="form-control" id="Language">
+                        <option value="0">Tiếng Việt</option>
+                        <option value="1">Tiếng Anh</option>
+                      </select>
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Tiều đề<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="Title" onblur="ChangeToSlug()" id="Title" type="text" class="form-control" required/>
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label texera"
+                        >Nội dung<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <textarea
+                      asp-for="Content"
+                        name=""
+                        id="Content"
+                        cols="30"
+                        rows="10"
+                      ></textarea>
+                      <script>
+                        CKEDITOR.replace("Content");
+                      </script>
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Tổng quan về cơ thể<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <textarea asp-for="Description" class="form-control"></textarea>
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Thẻ<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="Tag" id="Tag" required type="text" class="form-control" />
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Cho phép bình luận<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="isComment" id="isComment" type="checkbox" />
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Ngày bắt đầu<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="StartDate" id="StartDate" type="date" class="form-control" />
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Ngày cuối<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="EndDate" id="EndDate" type="date" class="form-control" />
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Ngày giới hạn<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="LimitedDate" id="LimitedDate" type="text" class="form-control" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-content-table">
+          <div class="panel-group" id="accordion">
+            <div class="panel">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a
+                    class="colpsible-panel"
+                    data-toggle="collapse"
+                    data-parent="#accordion"
+                    href="#collapseThress"
+                  >
+                    <span
+                      ><i class="fa fa-search" aria-hidden="true"></i> Seo</span
+                    >
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThress" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="form">                  
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Tên trang thân thiện<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="SeoTitle" id="SeoTitle" type="text" class="form-control" />
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Tiêu đề meta<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="MetaTitle" id="MetaTitle" type="text"  class="form-control"/>
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Từ khóa meta<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input type="text" id="MetaKeyword" asp-for="MetaKeyword" class="form-control" />
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Mô tả meta<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                       <textarea asp-for="MetaDescription" id="MetaDescription" class="form-control"></textarea>
+                    </div>                 
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+            </div>
+          </div>
+        </div>
+        <div class="page-content-table">
+          <div class="panel-group" id="accordion">
+            <div class="panel">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a
+                    class="colpsible-panel"
+                    data-toggle="collapse"
+                    data-parent="#accordion"
+                    href="#collapseOne"
+                  >
+                    <span
+                      ><i class="fa fa-search" aria-hidden="true"></i> Thuộc
+                      tính hiển thị</span
+                    >
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="form">
+                   
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Link ảnh xem trước<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="LinkImage" id="LinkImage" type="text" class="form-control" />
+                    </div>
+                    </div>
+                    <div class="form-add">
+                      <label for="" class="form-label"
+                        >Hiện thị trên trang chủ<i
+                          class="fa fa-question-circle-o"
+                          aria-hidden="true"
+                        ></i
+                      ></label>
+                      <input asp-for="isShowHome" id="isShowHome" type="checkbox" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </main>
+      <!-- page-content" -->
+
+
+      <script>
+          function UpdatePost(ModeForm){
+              debugger
+              var Postid = $('#PostId').val();
+              if(ModeForm==1){
+                  this.Validate();
+                    let validateInput = $('input[validate="false"]');
+                    if (validateInput && validateInput.length > 0) {
+                    alert("Bạn hãy điền đủ các trường thông tin");
+                    $(validateInput)[0].focus();
+                    return;
+                    }
+                    
+                    var data = {                
+                        Language : $('#Language').val(),
+                        Title : $('#Title').val(),
+                        Content : CKEDITOR.instances['Content'].getData(),
+                        Description : $('#Description').val(),
+                        Tag : $('#Tag').val(),
+                        isComment : $('#isComment').prop('checked'),
+                        StartDate : $('#StartDate').val(),
+                        EndDate : $('#EndDate').val(),
+                        LimitedDate : $('#LimitedDate').val(),
+                        SeoTitle : $('#SeoTitle').val(),
+                        MetaTitle : $('#MetaTitle').val(),
+                        MetaKeyword : $('#MetaKeyword').val(),
+                        MetaDescription : $('#MetaDescription').val(),
+                        LinkImage : $('#LinkImage').val(),
+                        isShowHome : $('#isShowHome').prop('checked'),
+                        CreatedDate : $('#CreatedDate').val()
+                    };
+
+              $.ajax({
+                type: 'Put',
+                url: '@Url.Action("Edit", "Post")',
+                data: {id:Postid,post: data },
+                dataType:"json",
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Post/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+                })
+              }
+              else{
+                  this.Validate();
+                    let validateInput = $('input[validate="false"]');
+                    if (validateInput && validateInput.length > 0) {
+                    alert("Bạn hãy điền đủ các trường thông tin");
+                    $(validateInput)[0].focus();
+                    return;
+                    }
+                    var Postid = $('#PostId').val();
+                    var data = {                
+                        Language : $('#Language').val(),
+                        Title : $('#Title').val(),
+                        Content : CKEDITOR.instances['Content'].getData(),
+                        Description : $('#Description').val(),
+                        Tag : $('#Tag').val(),
+                        isComment : $('#isComment').prop('checked'),
+                        StartDate : $('#StartDate').val(),
+                        EndDate : $('#EndDate').val(),
+                        LimitedDate : $('#LimitedDate').val(),
+                        SeoTitle : $('#SeoTitle').val(),
+                        MetaTitle : $('#MetaTitle').val(),
+                        MetaKeyword : $('#MetaKeyword').val(),
+                        MetaDescription : $('#MetaDescription').val(),
+                        LinkImage : $('#LinkImage').val(),
+                        isShowHome : $('#isShowHome').prop('checked'),
+                        CreatedDate : $('#CreatedDate').val()
+                    };
+
+              $.ajax({
+                type: 'Put',
+                url: '@Url.Action("Edit", "Post")',
+                data: {id:Postid,post: data },
+                dataType:"json",
+                async:false,
+                success: function (result) {
+                    
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+                })
+              }
+              
+          }
+          function Validate(){
+            $("input[required]").each(function () {
+              let value = $(this).val();
+              if (!value) {
+                $(this).addClass("s-input-error");
+                $(this).attr("validate", false);
+                $(this).attr("title", "Không thể bỏ trống");
+              } else {
+                $(this).removeClass("s-input-error");
+                $(this).attr("validate", true);
+              }
+              });
+          }  
+          function Delete(){
+            var Postid = $('#PostId').val();
+            var result = confirm("Bạn có muốn xóa bài viết này không?");
+            if (result) {
+                var Url = "";
+                Url = "/Post/Delete"
+                $.ajax({
+                    type: 'Post',
+                    url: Url,
+                    data: { id: Postid },
+                    async: false,
+                    success: function () {
+                        window.location.pathname = "/Post/Index"
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                })
+            } else {
+    
+            }
+          }
+          
+      </script>

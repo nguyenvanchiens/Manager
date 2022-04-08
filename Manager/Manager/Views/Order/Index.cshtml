@@ -1,0 +1,218 @@
+﻿@model IEnumerable<Manager.Models.Order>
+@{
+    ViewData["Title"] = "Index";
+}
+
+ <main class="page-content">
+    <div class="page-header">
+      <p class="fw">Danh sách đơn hàng</p>
+       <!-- Button HTML (to Trigger Modal) -->
+    <button type="button" href="#myModal1" role="button" class="btn btn-primary" data-bs-toggle="modal">Thêm mới</button>
+    </div>
+     <!-- Modal HTML -->
+     <div id="myModal1" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Mới execl đơn hàng</h5>
+                    <button type="button" class="btn-close btn btn-default" data-bs-dismiss="modal"> <i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="modal-body">
+                   <form method="post" asp-controller="Order" asp-action="FileUpload" enctype="multipart/form-data">
+                        <div class="input-group">
+                            <input type="file" name="file" id="file"/>
+                        </div> 
+                        <div class="input-group">
+                        <div class="group-download">
+                            <div class="link">
+                                <a href="/Order/Export">Tải file mẫu</a>    
+                            </div>
+                             <div class="logo">
+                                 <img style="width: 70px;" src="/image/logoexcel.png" />
+                             </div>               
+                        </div>                        
+                        </div>
+                        <div class="input-group">
+                            <div class="btn-footer">
+                                <button class="btn btn-lg bg-gray">HỦY</button>
+                                <button type="submit" class="btn btn-lg bg-black">TIẾP TỤC</button>
+                            </div>
+                        </div> 
+                    </form>                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-content-table">
+      <table class="table table-bordered dataTables" id="dataTable" cellpadding=0>
+        <thead>
+          <tr>           
+            <th scope="col">Đơn hàng</th>
+            <th scope="col">Trạng thái đơn hàng</th>
+            <th scope="col">Trạng thái thanh toán</th>
+            <th scope="col">Trạng thái giao hàng</th>
+            <th scope="col">Khách hàng</th>
+            <th scope="col">Ngày tạo</th>
+            <th scope="col">Tổng tiền</th>
+            <th scope="col">Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+           @foreach (var order in ViewBag.Order)
+           {
+             <tr>
+                
+                 <td class='tdCode'>@order.OrderCode</td>
+                 <td>
+                      @if ( order.Status== OrderStatus.InProgress)
+                      {
+                          <span class="orderstatus InProgress">Chờ xác nhận</span>
+                      } 
+                      @if (order.Status == OrderStatus.Confirmed)
+                      {
+                          <span class="orderstatus Confirmed">Chờ lấy hàng</span>
+
+                      }
+                      @if (order.Status == OrderStatus.Shipping)
+                      {
+                          <span class="orderstatus Shipping">Đang giao</span>
+                      }
+                       @if (order.Status == OrderStatus.Success)
+                      {
+                          <span class="orderstatus Success">Thành công</span>
+                      }
+                       @if (order.Status == OrderStatus.Canceled)
+                      {
+                          <span class="orderstatus Canceled">Hủy đơn</span>
+                      }
+                  </td>
+                 <td>@order.Payment</td>
+                 <td>@order.Delivery</td>
+                 <td>@order.UserName</td>
+                 <td>@order.CreatedDate.ToString(string.Format("dd-MM-yyyy"))</td>
+                 <td>@order.TotalPrice.ToString("#,##0.###")đ</td>              
+                 <td>
+                        <a class="btn btn-primary" href="/OrderDetail/OrderDetail/@order.OrderId">Chi tiết</a>
+                     <a class="btn-execl" title="xuất execl" href="/OrderDetail/Export/@order.OrderId"><img style="width:30px" src="~/image/logoexcel.png"/></a>
+                 </td>         
+             </tr>
+           }
+        </tbody>
+      </table>
+    </div>
+  </main>
+    <div class="alert alert-primary" id="notify" role="alert">
+       Thêm Mới Thành Công
+    </div>
+@section Scripts{
+    <script src="/js/MyTreeViewTable.js"></script>
+}
+<script>
+    $(document).ready(function(){
+       
+    })
+  
+</script>
+<style>
+table th:first-child{
+   
+}
+.form-controls{
+    display: block;
+    width: 100%;
+    padding: 0.30rem 0.40rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+table th{
+     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+input .form-control{
+    padding: 0.375rem -0.25rem !important;
+}
+.tdCode{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+#myModal1{
+    position: absolute !important;
+    top: 50% !important;
+    left: 54% !important;
+    transform: translate(-50%, -50%) !important;
+}
+.modal-content{
+    width:400px !important;
+}
+.input-group{
+    margin-bottom:30px;
+}
+.link{
+    margin-bottom:10px;
+}
+.group-download{
+    text-align: center;
+    width: 100%;
+}
+.btn-footer{
+        width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.btn-execl{
+    padding:0;
+    margin:0;
+    border:none;
+}
+.btn-execl:focus{
+    outline: none;
+    border: none;
+}
+.bg-gray,
+.bg-black{
+   color:white;
+}
+.bg-gray{
+    background-color:rgb(183,183,183);
+}
+.modal-open .modal{
+    overflow-x:unset;
+    overflow-y:unset;
+}
+.orderstatus{
+    padding:5px;
+    border-radius:4px;
+    color:white;
+}
+.InProgress{
+    background-color:orange;
+}
+.Success{
+    background-color:green;
+}
+.Shipping{
+    background-color:#2db19e;
+}
+.Confirmed{
+    background-color:#368cf7;
+}
+.Canceled{
+    background-color:red;
+}
+.bg-black{
+    background-color:rgb(32 31 31);
+}
+tr td .btn{
+    background-color: #007bff;
+}
+</style>
+
+

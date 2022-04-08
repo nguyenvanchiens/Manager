@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+body { background-color:#fafafa; font-family:'Open Sans';}
+.container { margin:150px auto;}
+    .treegrid-indent {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+    }
+
+    .treegrid-expander {
+        width: 0px;
+        height: 16px;
+        display: inline-block;
+        position: relative;
+        left:-17px;
+        cursor: pointer;
+    }
+</style>
+<div class="container">
+<h1 class="text-center">jQuery TreeTable Demo Page</h1>
+  <table id="tree-table" class="table table-hover table-bordered">
+        <thead>
+            <tr>
+             <th>#</th>
+            <th>Test</th>
+            </tr>
+        </thead>
+       <tbody>
+        <tr data-id="1" data-parent="0" data-level="1">
+          <td data-column="name">Node 1</td>
+          <td>Additional info</td>
+        </tr>
+        <tr data-id="2" data-parent="1" data-level="2">
+          <td data-column="name">Node 1</td>
+          <td>Additional info</td>
+        </tr>
+        <tr data-id="3" data-parent="1" data-level="2">
+          <td data-column="name">Node 1</td>
+          <td>Additional info</td>
+        </tr>
+        <tr data-id="4" data-parent="3" data-level="3">
+          <td data-column="name">Node 1</td>
+          <td>Additional info</td>
+        </tr>
+        <tr data-id="5" data-parent="3" data-level="3">
+          <td data-column="name">Node 1</td>
+          <td>Additional info</td>
+        </tr>
+       </tbody>
+    
+  </table>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<script src="~/vendor/js/javascript.js"></script>

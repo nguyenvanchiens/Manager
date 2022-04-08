@@ -1,0 +1,58 @@
+﻿@model Manager.Models.OrderDetail
+@{
+    ViewData["Title"] = "Update";
+}
+
+<main class="page-content">
+    <div class="page-content-table">
+        <form asp-action="Update" asp-controller="OrderDetail" method="post">
+             <input type="text" hidden class="form-control" asp-for="OrderDetailId">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label asp-for="LinkImage">Link ảnh</label>
+                <input type="text" class="form-control" asp-for="LinkImage" id="LinkImage" placeholder="Link image">
+              </div>
+              <div class="form-group col-md-6">
+                <label asp-for="Description">Tên sản phẩm</label>
+                <input type="text" class="form-control" asp-for="Description" id="Description" placeholder="Tên sản phẩm">
+              </div>
+            </div>
+            <div class="form-row"> <div class="form-group col-md-6">
+                <label asp-for="Price">Giá bán</label>
+                <input type="text" class="form-control" asp-for="Price" id="Price" placeholder="Price">
+              </div>
+              <div class="form-group col-md-6">
+                <label asp-for="Quantity">Số lượng</label>
+                <input type="text" class="form-control" asp-for="Quantity" id="Quantity" placeholder="Số lượng">
+              </div>
+            </div>
+             <div class="form-row"> 
+                 <div class="form-group col-md-6">
+                <label asp-for="PromotionalCode">Mã giảm giá</label>
+                <input type="text" class="form-control" asp-for="PromotionalCode" id="PromotionalCode" placeholder="PromotionalCode">
+              </div>
+              <div class="form-group col-md-6">
+                <label asp-for="Size">Size</label>
+                <input type="text" class="form-control" asp-for="Size" id="Size" placeholder="Size">
+              </div>
+            </div>   
+             <div class="form-row"> 
+                 <div class="form-group col-md-6">
+                <label asp-for="Country">Đất nước</label>
+                <input type="text" class="form-control" asp-for="Country" id="Country" placeholder="Country">
+              </div>
+              <div class="form-group col-md-6">
+                <label asp-for="Color">Màu sắc</label>
+                <input type="text" class="form-control" asp-for="Color" id="Size" placeholder="Color">
+              </div>
+            </div>  
+            <button type="submit" class="btn btn-primary">Update</button>
+       </form>
+    </div>
+</main>
+
+<style>
+.page-content-table{
+    width:1000px;
+}
+</style>

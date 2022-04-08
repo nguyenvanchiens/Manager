@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "datatable@1.0.6",
+      "destination": "wwwroot/lib/datatable/",
+      "treetables": "1.2.1"
+    }
+  ]
+}

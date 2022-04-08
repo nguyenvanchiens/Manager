@@ -1,0 +1,358 @@
+﻿@model Manager.Models.Employee
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+ <main class="page-content">
+    <div class="page-header">
+      <p class="fw">Danh sách nhân viên</p>
+       <!-- Button HTML (to Trigger Modal) -->
+        @if (@ViewBag.isCreate)
+        {
+             <button type="button" href="#myModal" role="button" onclick="ShowFormAdd()" class="btn btn-primary" data-bs-toggle="modal">Thêm mới</button>
+        }       
+     <!-- Modal HTML -->
+     <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Mới Nhân Viên</h5>
+                    <button type="button" onclick="HideForm()" class="btn-close btn btn-default" data-bs-dismiss="modal"> <i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="modal-body">
+                  <form id="myFrom">                                        
+                     <div class="mb-3">
+                      <input asp-for="EmployeeId" type="text" class="form-control" hidden id="EmployeeId" aria-describedby="emailHelp">
+                      <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Mã nhân viên</label>
+                      <input asp-for="EmployeeCode" required name="EmployeeCode" type="text" class="form-control"  id="EmployeeCode" aria-describedby="emailHelp">
+                      <span asp-validation-for="EmployeeCode" id="erEmployeeCode" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Tên nhân viên</label>
+                      <input asp-for="EmployeeName" required name="EmployeeName" type="text" class="form-control" id="EmployeeName" aria-describedby="emailHelp">
+                      <span asp-validation-for="EmployeeName" id="erEmployeeName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Ngày sinh</label>
+                      <input asp-for="DateOfBirth" checkdate required type="date" class="form-control" id="DateOfBirth">
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Nơi ở</label>
+                      <input asp-for="Address" required type="text" class="form-control" id="Address">
+                       <span asp-validation-for="EmployeeName" id="erAddress" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Số điện thoại</label>
+                      <input asp-for="Phone" required type="text" class="form-control" id="Phone">
+                    </div>
+                    <div class="mb-3">
+                      <label for="UserName" class="form-label">Tài khoản</label>
+                      <input asp-for="UserName" required type="text" class="form-control" id="UserName">
+                    </div>
+                    <div class="mb-3" id="group-password">
+                      <label for="PassWord" class="form-label">Mật khẩu</label>
+                      <input asp-for="PassWord" type="password" class="form-control" id="PassWord">
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label">Chọn phòng ban</label>
+                      <select class="form-select form-control select" id="DepartmentId" asp-for="DepartmentId" aria-label="Default select example">
+                      @foreach (var deparment in ViewBag.Deparments)
+                      {
+                          <option class="form-control Department" value="@deparment.DepartmentId">@deparment.DepartmentName</option>
+                      }                  
+                      </select>
+                    </div>
+                    <div class="mb-3 text-right">
+                      <button type="button" onclick="AddOrUpdate()" class="btn btn-primary btn-add">Thêm</button>
+                    </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="page-search">
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <span><i b-eginzb9zup="" class="fa fa-search" aria-hidden="true"></i></span>
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              </button>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+              <div class="input-groups">
+                 <form method="get" style="display:flex">
+                      <label style="margin-right:10px" for="">Tên Nhân Viên</label>
+                    <div>
+                    <div>
+                    <input type="text" name="filter">
+                    </div> 
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    </div>     
+                 </form>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-content-table">
+      <table class="table table-bordered order-column dataTables" style="width:100%"  id="dataTable" cellpadding=0>
+        <thead>
+            <tr>
+                <th scope="col">Mã NV</th>
+                <th scope="col">Tên nhân viên</th>
+                <th scope="col">Ngày sinh</th>
+                <th scope="col">Quê quán</th>
+                <th scope="col">Tên phòng ban</th>
+                <th scope="col" class="text-center">Chức năng</th>
+                </tr>
+        </thead>
+         <tbody>
+           @foreach (var employee in ViewBag.Employeess)
+           {
+             <tr>
+                <td>@employee.EmployeeCode</td>
+                <td>@employee.EmployeeName</td>
+                <td>                  
+                    @employee.DateOfBirth.ToString(string.Format("dd-MM-yyyy"))
+                </td>
+                    
+                <td>@employee.Address</td>
+                <td>@employee.DepartmentName</td>
+                <td class="text-center">
+                    <button href="#myModal" data-bs-toggle="modal" onclick="ShowFormUpdate('@employee.EmployeeId')" type="button" class="btn btn-default">Chỉnh sửa</button>
+                    <a style="cursor:pointer" onclick="Delete('@employee.EmployeeId')" class="btn btn-light">Xóa</a>
+                    @if (@ViewBag.isAdmin)
+                    {
+                        <a style="cursor:pointer" href="/Home/Role/@employee.EmployeeId" class="btn btn-light">
+                            Phân quyền
+                        </a>                
+                    }    
+                    </td>
+             </tr>
+           }
+        </tbody>             
+      </table>
+    </div>
+  </main>
+    <div class="alert alert-primary" id="notify" role="alert">
+       Thêm Mới Thành Công
+    </div>
+  @section Scripts {
+    <script>
+      
+    </script>     
+}
+<script>
+
+    var employeeId = "";
+     function Validate(){
+        $("input[required]").each(function () {
+          let value = $(this).val();
+          var checkDate = $("input[checkdate]").val();
+          if (!value) {
+            $(this).addClass("s-input-error");
+            $(this).attr("validate", false);
+            $(this).attr("title", "Không thể bỏ trống");
+          }
+          else if(new Date(checkDate)>new Date()){
+               $(this).addClass("s-input-error");
+            $(this).attr("validate", false);
+            $(this).attr("title", "Ngày không được lớn hơn ngày hiện tại");
+          }
+          else {
+            $(this).removeClass("s-input-error");
+            $(this).attr("validate", true);
+          }
+          });
+     }  
+    function checkDuplicate(employeeId,employeeCode){
+        debugger
+        var result = "";
+        $.ajax({
+                type: 'Get',
+                url: '/Home/GetEmployeeCode',
+                contentType: 'application/json',
+                data: { 
+                    employeeId:employeeId,
+                    employeeCode: employeeCode 
+                },
+                async: false,
+                  success: function (data) {                  
+                    result = data;
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+            return result;
+    }
+    function ShowFormAdd(){
+        var employeeId = "";
+        $('#group-password').show();
+        $.ajax({
+            type: 'Get',
+            url: '/Home/NewCodeEmployee',
+            contentType: 'application/json; charset=utf-8',
+            async: false,
+            success: function (data) {             
+                $('#EmployeeCode').val(data);                          
+            }
+        })
+    };
+    function Delete(employeeId) {
+        var result = confirm("Bạn có muốn xóa nhân viên này?");
+        if (result) {
+            var Url = "";
+            Url = "/Home/Delete"
+            $.ajax({
+                type: 'Post',
+                url: Url,
+                data: { EmployeeId: employeeId },
+                async: false,
+                success: function () {
+                    window.location.pathname = "/Home/Index"
+                },
+                error: function (data) {
+                    notAuthozire(data);
+                }
+            })
+        } else {
+    
+        }
+    }
+    function HideForm() {
+        $('#myFrom')[0].reset();
+        $('.btn-add').html('Thêm');
+          $('#DepartmentId').prop('selectedIndex',0)
+    }
+    function ShowFormUpdate(employeeId) {
+        this.employeeId = employeeId;
+        $.ajax({
+            type: 'Get',
+            url: '/Home/Get',
+            contentType: 'application/json; charset=utf-8',
+            data: { employeeId: employeeId },
+            async: false,
+            success: function (data) {
+                $('#group-password').hide();
+                $('.btn-add').html('Sửa');
+                $('#EmployeeId').val(data.employeeId);
+                $('#EmployeeCode').val(data.employeeCode);
+                $('#EmployeeName').val(data.employeeName);
+                $('#DateOfBirth').val(formatDate(data.dateOfBirth));
+                $('#Address').val(data.address);
+                $('#Phone').val(data.phone);
+                $('#UserName').val(data.userName);
+                var option = $('.modal-body option');
+                for (var i = 0; i < option.length; i++) {
+                    var departmentId = option[i].value;
+                    if (departmentId == data.departmentId) {
+                        option[i].setAttribute('selected', true);
+                    }
+                    else {
+                        option[i].removeAttribute('selected');
+                    }
+                }
+    
+            },error(data){
+                notAuthozire(data);
+            }
+        })
+    }
+    function AddOrUpdate(){
+        debugger
+            var data = {
+                EmployeeId:this.employeeId,
+                EmployeeCode:$('#EmployeeCode').val(),
+                EmployeeName:$('#EmployeeName').val(),
+                DateOfBirth:$('#DateOfBirth').val(),
+                Address:$('#Address').val(),
+                Phone:$('#Phone').val(),
+                UserName:$('#UserName').val(),
+                PassWord:$('#PassWord').val(),
+                DepartmentId:$('#DepartmentId').val()
+            };   
+            
+            this.Validate();
+              let validateInput = $('input[validate="false"]');
+                if (validateInput && validateInput.length > 0) {
+                  alert("Bạn hãy điền đủ các trường thông tin");
+                  $(validateInput)[0].focus();
+                  return;
+                }
+            if(this.employeeId==""){
+                debugger
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("AddEmployee", "Home")',           
+                dataType:"json",
+                data: { employee: data },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Home/Index"
+                },
+                error: function (data) {
+                      notAuthozire(data); 
+                }
+            })
+            }
+            else{           
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("UpdateEmployee", "Home")',           
+                dataType:"json",
+                data: { employee: data },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Home/Index"
+                },
+                error: function (data) {
+                   notAuthozire(data); 
+                }
+            })
+        }
+    }
+    function notAuthozire(data){
+        if(data.status==403){
+             alert('Bạn không có quyền này');
+             window.location.pathname="/Account/AccessDenied";
+        }
+    }
+    function formatDate(val) {
+        var result = "";
+        var date = new Date(val);
+        if (Number.isNaN(date.getTime())) {
+            result = "";
+        } else {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+            result = year + "-" + month + "-" + day;
+        }
+        return result;
+    }
+</script>
+<style>
+    .page-link{
+        color:black;
+    }
+    .page-link:focus{
+        box-shadow:unset;
+    }
+</style>
+
+

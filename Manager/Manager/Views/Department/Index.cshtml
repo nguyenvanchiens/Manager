@@ -1,0 +1,225 @@
+﻿@model Manager.Models.Department;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page-content">
+    <div class="page-header">
+      <p class="fw">Danh sách tên miền đen</p>
+       <!-- Button HTML (to Trigger Modal) -->
+    <button type="button" href="#myModal" role="button" class="btn btn-primary" data-bs-toggle="modal">Thêm mới</button>
+
+   <!-- Modal HTML -->
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm Mới Nhân Viên</h5>
+                    <button type="button" onclick="HideForm()" class="btn-close btn btn-default" data-bs-dismiss="modal"> <i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="modal-body">
+                  <form id="myFrom">
+                      @Html.AntiForgeryToken()
+                     <div class="mb-3">
+                      <input asp-for="DepartmentId" type="text" class="form-control" hidden id="DepartmentId" aria-describedby="emailHelp">                     
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Mã Phòng Ban</label>
+                      <input asp-for="DepartmentCode" required  type="text" class="form-control" id="DepartmentCode" aria-describedby="emailHelp">
+                      <span asp-validation-for="DepartmentCode" id="erDepartmentCode" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label">Tên Phòng Ban</label>
+                      <input asp-for="DepartmentName" required name="DepartmentName" type="text" class="form-control" id="DepartmentName" aria-describedby="emailHelp">
+                      <span asp-validation-for="DepartmentName" id="erDepartmentName" class="text-danger"></span>
+                    </div>                                    
+                    <div class="mb-3 text-right">
+                      <button type="button" onclick="AddOrUpdate()" class="btn btn-primary btn-add">Thêm</button>
+                    </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="page-search">
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <span><i b-eginzb9zup="" class="fa fa-search" aria-hidden="true"></i></span>
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              </button>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+              <div class="input-groups">
+                 <form method="get" action="/Department/Index" style="display:flex">
+                      <label style="margin-right:10px" for="">Tên phòng ban</label>
+                    <div>
+                    <div>
+                    <input type="text" name="filter">
+                    </div> 
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    </div>     
+                 </form>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-content-table">
+      <table class="table table-bordered" id="dataTable" cellpadding=0>
+        <thead>           
+            <tr>
+                <th scope="col">Mã phòng ban</th>
+                <th scope="col">Tên phòng ban</th>
+                <th scope="col">Ngày Tạo</th>           
+                <th scope="col" class="text-center">Chức năng</th>
+            </tr>                   
+        </thead>
+        <tbody>
+           @foreach (var department in ViewBag.Departments)
+            {
+             <tr>
+                <td>@department.DepartmentCode</td>
+                <td>@department.DepartmentName</td>
+                <td>@department.CreatedDate.ToString(string.Format("dd-MM-yyyy"))</td>
+                <td class="text-center">
+                    <button href="#myModal" data-bs-toggle="modal" onclick="ShowUpdate('@department.DepartmentId')" type="button" class="btn btn-default">Chỉnh sửa</button>
+                    <a style="cursor:pointer" onclick="Delete('@department.DepartmentId')" class="btn btn-light">Xóa</a>
+                    </td>
+             </tr>
+            }
+        </tbody>
+      </table>
+     
+    </div>
+  </main>
+
+<script>
+    var departmentId = "";
+     function Validate(){
+        $("input[required]").each(function () {
+          let value = $(this).val();
+          if (!value) {
+            $(this).addClass("s-input-error");
+            $(this).attr("validate", false);
+            $(this).attr("title", "Không thể bỏ trống");
+          } else {
+            $(this).removeClass("s-input-error");
+            $(this).attr("validate", true);
+          }
+          });
+     }  
+    function AddOrUpdate(){
+        var data = {
+             DepartmentId:$('#DepartmentId').val(),
+             DepartmentCode:$('#DepartmentCode').val(),
+             DepartmentName:$('#DepartmentName').val(),
+        }
+        this.Validate();
+         let validateInput = $('input[validate="false"]');
+                if (validateInput && validateInput.length > 0) {
+                  alert("Bạn hãy điền đủ các trường thông tin");
+                  $(validateInput)[0].focus();
+                  return;
+                }
+        if(this.departmentId==""){
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("AddDepartment", "Department")',           
+                dataType:"json",
+                data: { department: data },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Department/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+            }
+            else{           
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("UpdateDepartment", "Department")',           
+                dataType:"json",
+                data: { department: data },
+                async:false,
+                success: function (result) {
+                    window.location.pathname="/Department/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+        }
+
+    }
+
+    function Delete(departmentId) {
+        var result = confirm("Bạn có muốn xóa phòng ban này không?");
+        if (result) {
+            var Url = "";
+            Url = "/Department/Delete"
+            $.ajax({
+                type: 'Post',
+                url: Url,
+                data: { DepartmentId: departmentId },
+                async: false,
+                success: function () {
+                    window.location.pathname = "/Department/Index"
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+        } else {
+    
+        }
+    }
+    function HideForm() {
+       $('.btn-add').html('Thêm mới');
+       var departmentId = "";
+    }
+    function ShowUpdate(departmentId) {
+        this.departmentId = departmentId;
+        $.ajax({
+            type: 'Get',
+            url: '/Department/Get',
+            contentType: 'application/json; charset=utf-8',
+            data: { departmentId: departmentId },
+            async: false,
+            success: function (data) {
+                $('.btn-add').html('Sửa');
+                $('#DepartmentId').val(data.departmentId);
+                $('#DepartmentCode').val(data.departmentCode);
+                $('#DepartmentName').val(data.departmentName);               
+            }
+        })
+    }
+    function formatDate(val) {
+        var result = "";
+        var date = new Date(val);
+        if (Number.isNaN(date.getTime())) {
+            result = "";
+        } else {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+            result = year + "-" + month + "-" + day;
+        }
+        return result;
+    }
+</script>
+
+
+
